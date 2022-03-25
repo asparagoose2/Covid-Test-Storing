@@ -1,6 +1,6 @@
 {
     "id": "/testResult",
-    "title": "Test Resault",
+    "title": "Test Result",
     "type": "object",
     "properties": {
         "name": {
