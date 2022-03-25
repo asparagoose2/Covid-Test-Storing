@@ -1,0 +1,23 @@
+{
+  "name": "covid-test-storing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asparagoose2/Covid-Test-Storing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/asparagoose2/Covid-Test-Storing/issues"
+  },
+  "homepage": "https://github.com/asparagoose2/Covid-Test-Storing#readme",
+  "dependencies": {
+    "jsonschema": "^1.4.0"
+  }
+}
