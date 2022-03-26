@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/asparagoose2/Covid-Test-Storing#readme",
   "dependencies": {
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
     "jsonschema": "^1.4.0"
   }
 }
