@@ -8,17 +8,17 @@ const cwd = process.cwd();
 const fileValidator = function(fileName) {
     const fileExtension = fileName.split('.').pop();
     if(fileExtension !== 'json') {
-        return false;
+        return {valid:false, errors: [{message: 'File extension must be json'}]};
     }
     try {
         const filePath = cwd + '/test-files/' + fileName;
         const testResultFile = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const valid = validator.validate(testResultFile, testResultSchema);
-        return valid.valid;
+        return {valid: valid.valid, errors: valid.errors.map(err => '`'+err.property.split('.')[1] +'` ' + err.message).join('\n') || 'No errors'};
     } catch(e) {
         console.log('file is not valid');
         console.log(e);
-        return false;
+        return {valid:false, errors: [{message: 'Could not open file'}]};
     }
 }
 
