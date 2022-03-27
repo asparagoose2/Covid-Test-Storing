@@ -1,5 +1,6 @@
 {
     "name": "test",
     "result": true,
-    "timeStamp": 12345
+    "timeStamp": "12345",
+    "valid": true
 }

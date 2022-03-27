@@ -11,7 +11,10 @@
         },
         "timeStamp": {
             "type": "number"
+        },
+        "valid": {
+            "type": "boolean"
         }
     },
-    "required": ["name", "result", "timeStamp"]
+    "required": ["name", "result", "timeStamp", "valid"]
 }
