@@ -25,6 +25,7 @@ exports.serviceController = {
                 });
             } else {
                 let data = [];
+                console.log(req.body);
                 //loop all files
                 for(let i = 0; i < req.files.reports.length; i++) {
                     //get file

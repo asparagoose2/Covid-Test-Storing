@@ -6,7 +6,13 @@ $(document).ready(function(e) {
         url: API_URL+"/publicKey",
         success:  function(data){
             console.log("upload_files.js");
-            const publicKey = data.publicKey;
+            let publicKey = data.publicKey;
+            publicKey = `-----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDlOJu6TyygqxfWT7eLtGDwajtN
+            FOb9I5XRb6khyfD1Yt3YiCgQWMNW649887VGJiGr/L5i2osbl8C9+WJTeucF+S76
+            xFxdU6jE0NQ+Z+zEdhUTooNRaY5nZiu5PgDB0ED/ZKBUSLKL7eibMxZtMlUDHjm4
+            gwQco1KRMDSmXSMkDwIDAQAB
+            -----END PUBLIC KEY-----`;
             $("input[name='publicKey']").val(publicKey);
             $("#filesInput").prop('disabled', false); 
         },
@@ -22,21 +28,54 @@ $(document).ready(function(e) {
 $("#form").submit(function(e) {
     e.preventDefault();    
     const formData = new FormData(this);
-    // const encrypt = new JSEncrypt();
-    // encrypt.setPublicKey($('#publicKey').val());
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey($('#publicKey').val());
     // encrypt the formData
-    // for (var pair of formData.entries()) {
-    //     if (pair[0] == "files") {
-    //         var files = pair[1];
-    //         for (var i = 0; i < files.length; i++) {
-    //             var file = files[i];
-    //             var fileHash = CryptoJS.SHA256(file).toString();
-    //             var encryptedFile = encrypt.encrypt(fileHash);
-    //             formData.set(pair[0] + '[' + i + ']', encryptedFile);
-    //         }
-    //     } 
-    // }
-    console.log(formData.getAll('reports'));
+    let i = 0;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const fileHash = CryptoJS.SHA256(e.target.result).toString();
+        console.log(fileHash);
+        encrypted = encrypt.encrypt(fileHash);
+        console.log(encrypted);
+        formData.set('file'+i, encrypted);
+        i++;
+        if(i < $('#filesInput')[0].files.length) {
+            reader.readAsText($('#filesInput')[0].files[i]);
+        } else {
+            $.ajax({
+                type: "POST",
+                url: API_URL+"/covidTestReport",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:  function(data){
+                    console.log(data);
+                    alert("Files uploaded successfully");
+                },
+                error: function (request, status, error) {
+                    alert("Could not connect to server");
+                    console.log(request);
+                    console.log(status);
+                    console.log(error);
+                }
+            });
+        }
+    }
+    reader.readAsText($('#filesInput')[0].files[i]);
+});
+    /*
+    for (var pair of formData.entries()) {
+        if (pair[0] == "reports") {
+            var file = pair[1];
+            console.log(file);
+            FileReader.readAsText(file);
+            var fileHash = CryptoJS.SHA256(file).toString();
+            console.log(fileHash);
+            var encryptedFile = encrypt.encrypt(fileHash);
+            formData.set(pair[0] + '[' + i++ + ']', encryptedFile);
+        } 
+    }
     $.ajax({
         type: "POST",
         url: API_URL+"/covidTestReport",
