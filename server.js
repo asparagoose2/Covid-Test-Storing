@@ -1,39 +1,38 @@
 const express = require("express");
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 //require('dotenv').config();
-const { customersRouter } = require("./routers/customersRouter");
-
-const port = process.env.PORT || 3200;
+const { serviceRouter } = require("./routers/router");
+const path = require('path');
+const port = process.env.PORT || 3000;
 const app = express();
+const fileUpload = require("express-fileupload");
 // const originUrl='https://weddinglysystem.netlify.app';
 
-app.use(cookieParser());
-const corsOptions = {
-origin:originUrl,
-  credentials: true,            //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-};
+const  corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
 
 app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
+const publicDirectoryPath = path.join(__dirname, './frontend/')
+app.use(express.static(publicDirectoryPath))
 
+app.use("/", (req, res, next) => {
+    console.log(req.url);
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+    });
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Weddingly application." });
-});
+app.use('/', serviceRouter);
 
-app.use('/weddingly/auth', authRouter);
-app.use('/weddingly/customers', customersRouter);
-
-app.use('/weddingly/suppliers', suppliersRouter);
-
-app.use('/weddingly/ratings', ratingsRouter);
 
 app.use((req, res) => {
+  // res.sendFile(__dirname + '/frontend/index.html');
   res.status(400).send('Something is broken!');
 });
 

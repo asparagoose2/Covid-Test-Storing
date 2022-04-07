@@ -1,16 +1,20 @@
-const API_URL = ""
+const API_URL = "http://127.0.0.1:3000";
+console.log(API_URL);
 $(document).ready(function(e) {
     $.ajax({
         type: "GET",
         url: API_URL+"/publicKey",
         success:  function(data){
+            console.log("upload_files.js");
             const publicKey = data.publicKey;
-            $("#publicKey").val(publicKey);
-            $("#filesInput").disabled = false;  
+            $("input[name='publicKey']").val(publicKey);
+            $("#filesInput").prop('disabled', false); 
         },
-        error: function(data){
+        error: function (request, status, error) {
             alert("Could not connect to server");
-            console.log(data);
+            console.log(request);
+            console.log(status);
+            console.log(error);
         }
     });
         
@@ -18,20 +22,21 @@ $(document).ready(function(e) {
 $("#form").submit(function(e) {
     e.preventDefault();    
     const formData = new FormData(this);
-    const encrypt = new JSEncrypt();
-    encrypt.setPublicKey($('#publicKey').val());
+    // const encrypt = new JSEncrypt();
+    // encrypt.setPublicKey($('#publicKey').val());
     // encrypt the formData
-    for (var pair of formData.entries()) {
-        if (pair[0] == "files") {
-            var files = pair[1];
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                var fileHash = CryptoJS.SHA256(file).toString();
-                var encryptedFile = encrypt.encrypt(fileHash);
-                formData.set(pair[0] + '[' + i + ']', encryptedFile);
-            }
-        } 
-    }
+    // for (var pair of formData.entries()) {
+    //     if (pair[0] == "files") {
+    //         var files = pair[1];
+    //         for (var i = 0; i < files.length; i++) {
+    //             var file = files[i];
+    //             var fileHash = CryptoJS.SHA256(file).toString();
+    //             var encryptedFile = encrypt.encrypt(fileHash);
+    //             formData.set(pair[0] + '[' + i + ']', encryptedFile);
+    //         }
+    //     } 
+    // }
+    console.log(formData.getAll('reports'));
     $.ajax({
         type: "POST",
         url: API_URL+"/covidTestReport",
