@@ -37,15 +37,6 @@ exports.serviceController = {
         res.json({
             publicKey: process.env.PUBLIC_KEY || "publicKey"
         });
-        // this.publicKey.findById(req.params.id)
-        //     .then((result) => {
-        //         if (result) {
-        //             res.json(result);
-        //         }
-        //     })
-        //     .catch((err) => {
-        //         res.status(404).json({ message: `Can't find customer by id!` });
-        //     })
     },
     uploadHandler(req, res) {
         try {
@@ -72,16 +63,16 @@ exports.serviceController = {
                             let rawdata = fs.readFileSync(`${process.cwd()}/filesUploads/${fileName}`, 'utf8');
                             const hashSum = crypto.createHash('sha256');
                             hashSum.update(rawdata);
-                            const hex = hashSum.digest('hex');
+                            const hash = hashSum.digest('hex');
                             const decrypted = jsEncrypt.decrypt(req.body["file"+i]);
-                            if(decrypted === hex) {
+                            if(decrypted === hash) {
                                 data.push({
                                     fileName: fileName,
                                     filePath: `${process.cwd()}/filesUploads/${fileName}`,
-                                    fileHash: hex
+                                    fileHash: hash
                                 });
                             } else {
-                                
+
                                 res.status(500).send({
                                     status: false,
                                     message: 'File is not valid!'
