@@ -2,9 +2,9 @@ require('dotenv').config();
 const axios = require('axios');
 
 const URL = process.env.SLACK_WEBHOOK_URL;
-const CHANEL_ID = '#group-2213';
-const BOT_NAME = 'CovidApp Bot';
-const BOT_ICON = ':no_entry:';
+const CHANEL_ID = process.env.SLACK_CHANEL_ID;
+const BOT_NAME = process.env.SLACK_BOT_NAME;
+const BOT_ICON = process.env.SLACK_BOT_ICON;
 const title = "Recieved an invalid test result file";
 
 const sendNotification = function(fileName, errorMessage) {

@@ -12,11 +12,11 @@ const fileValidator = function(fileName, file) {
     try {
         const testResultFile = JSON.parse(file);
         const valid = validator.validate(testResultFile, testResultSchema);
-        return {valid: valid.valid, errors: valid.errors.map(err => '`'+(err.property.split('.')[1] || err.property) +'` ' + err.message).join('\n') || 'No errors'};
+        return {valid: valid.valid, errors: valid.errors.map(err => '`'+(err.property.split('.')[1] || err.property) +'` ' + err.message).join('\n') || ''};
     } catch(e) {
         console.log('file is not valid');
         console.log(e);
-        return {valid:false, errors: [{message: 'Could not parse file'}]};
+        return {valid:false, errors: 'Could not parse file'};
     }
 }
 
