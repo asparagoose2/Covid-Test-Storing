@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:3000";
+const API_URL = "http://34.246.55.129";
 console.log(API_URL);
 $(document).ready(function(e) {
     $.ajax({
