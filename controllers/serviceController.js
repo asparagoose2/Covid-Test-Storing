@@ -47,7 +47,6 @@ exports.serviceController = {
                     message: 'No file uploaded'
                 });
             } else {
-                let wasError = false;
                 //loop all files
                 for (let i = 0; i < req.files.reports.length; i++) {
                     //get file
@@ -69,7 +68,6 @@ exports.serviceController = {
                             uploadFile(fileName, isFileValid)
                             
                             if (!isFileValid) {
-                                wasError = true;
                                 let errors = "";
                                 if (!isHashValid.valid) {
                                     errors += isHashValid.errors + "\n";
@@ -81,23 +79,16 @@ exports.serviceController = {
                                     errors += isContentValid.errors + "\n";
                                 }
                                 handleError(fileName, errors);
-                            } else {
-
                             }
                         }
                     });
                 }
-                if (wasError) {
-                    res.json({
-                        status: flase,
-                        message: 'There was an error with one or more files. Please check the logs in slack channel for more details'
-                    });
-                } else {
-                    res.json({
-                        status: true,
-                        message: req.files.reports.length + ' file(s) were uploaded successfully'
-                    });
-                }
+
+                res.json({
+                    status: true,
+                    message: req.files.reports.length + ' file(s) were uploaded successfully'
+                });
+                
             }
 
         } catch (err) {
