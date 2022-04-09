@@ -48,8 +48,7 @@ exports.serviceController = {
                 });
             } else {
                 //loop all files
-                // const files = req.files.reports.length > 1 ? req.files.reports : [req.files.reports];
-                const files = req.files.reports;
+                const files = req.files.reports.length > 1 ? req.files.reports : [req.files.reports];
                 for (let i = 0; i < files.length; i++) {
                     //get file
                     let file = files[i];
