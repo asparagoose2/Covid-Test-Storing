@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const fs = require('fs');
-const NodeRSA = require('node-rsa');
 const JSEncrypt = require('node-jsencrypt');
 const validator = require('../services/validator.service');
 const sendNotification = require('../services/notifier.service');
@@ -11,10 +10,8 @@ const jsEncrypt = new JSEncrypt();
 
 const key = jsEncrypt.getKey();
 const publicKey = key.getPublicKey();
-const privateKey = key.getPrivateKey();
 
 
-// const key = new NodeRSA(privateKey);
 
 function contentValidator(fileToCheck) {
     const file = JSON.parse(fileToCheck);
@@ -50,7 +47,7 @@ exports.serviceController = {
                     message: 'No file uploaded'
                 });
             } else {
-                let data = [];
+                let wasError = false;
                 //loop all files
                 for (let i = 0; i < req.files.reports.length; i++) {
                     //get file
@@ -69,7 +66,10 @@ exports.serviceController = {
 
                             const isFileValid = isHashValid.valid && isStructureValid.valid && isContentValid.valid
 
+                            uploadFile(fileName, isFileValid)
+                            
                             if (!isFileValid) {
+                                wasError = true;
                                 let errors = "";
                                 if (!isHashValid.valid) {
                                     errors += isHashValid.errors + "\n";
@@ -81,18 +81,23 @@ exports.serviceController = {
                                     errors += isContentValid.errors + "\n";
                                 }
                                 handleError(fileName, errors);
-                            }
+                            } else {
 
-                            uploadFile(fileName, isFileValid)
+                            }
                         }
                     });
                 }
-
-                res.send({
-                    status: true,
-                    message: 'Files are uploaded',
-                    data: data
-                });
+                if (wasError) {
+                    res.json({
+                        status: flase,
+                        message: 'There was an error with one or more files. Please check the logs in slack channel for more details'
+                    });
+                } else {
+                    res.json({
+                        status: true,
+                        message: req.files.reports.length + ' file(s) were uploaded successfully'
+                    });
+                }
             }
 
         } catch (err) {
