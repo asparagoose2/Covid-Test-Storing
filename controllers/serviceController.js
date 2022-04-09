@@ -48,12 +48,11 @@ exports.serviceController = {
                 });
             } else {
                 //loop all files
-                console.log(req.files.reports);
-                console.log(req.files.reports.length);
-                for (let i = 0; i < req.files.reports.length; i++) {
-                    console.log(req.files.reports[i]);
+                // const files = req.files.reports.length > 1 ? req.files.reports : [req.files.reports];
+                const files = req.files.reports;
+                for (let i = 0; i < files.length; i++) {
                     //get file
-                    let file = req.files.reports[i];
+                    let file = files[i];
                     //get file name
                     let fileName = file.name;
                     file.mv(`${process.cwd()}/filesUploads/${fileName}`, function (err) {
@@ -89,7 +88,7 @@ exports.serviceController = {
 
                 res.json({
                     status: true,
-                    message: req.files.reports.length + ' file(s) were uploaded successfully'
+                    message: files.length + ' file(s) were uploaded successfully'
                 });
                 
             }
