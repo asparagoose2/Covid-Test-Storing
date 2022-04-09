@@ -16,6 +16,9 @@ const invalidBucket = new AWS.S3({
 async function uploadFile(fileName, isValid) {
     const bucket = isValid ? validBucket : invalidBucket;   
     const file = fs.readFileSync(`${process.cwd()}/filesUploads/${fileName}`, 'utf8');
+    //delete file
+    fs.unlinkSync(`${process.cwd()}/filesUploads/${fileName}`);
+    
     return new Promise((resolve, reject) => {
         bucket.upload({ 
             Bucket: isValid ? process.env.VALID_S3_BUCKET_NAME : process.env.INVALID_S3_BUCKET_NAME,
