@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/asparagoose2/Covid-Test-Storing#readme",
   "dependencies": {
+    "aws-sdk": "^2.1111.0",
     "axios": "^0.26.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

@@ -1,7 +1,6 @@
 const validator = require('./services/validator.service');
 const notifier = require('./services/notifier.service');
-
-const valid = validator('test.json');
+require('dotenv').config();
 
 
 if(valid.valid) {
