@@ -8,13 +8,13 @@ const uploadFile = require('../services/aws.service');
 const jsEncrypt = new JSEncrypt();
 
 
-const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
-const publicKey = fs.readFileSync(process.env.PUBLIC_KEY_PATH, 'utf8');
 
-console.log('privateKey: ', privateKey);
-jsEncrypt.setPrivateKey(privateKey);
+const key = jsEncrypt.getKey();
+const publicKey = key.getPublicKey();
+const privateKey = key.getPrivateKey();
 
-const key = new NodeRSA(privateKey);
+
+// const key = new NodeRSA(privateKey);
 
 function contentValidator(fileToCheck) {
     const file = JSON.parse(fileToCheck);
