@@ -27,9 +27,21 @@ jsEncrypt.setPrivateKey(privateKey);
 
 const key = new NodeRSA(privateKey);
 
-// const key = new NodeRSA({b: 512});
+function contentValidator(fileToCheck) {
+    const file = JSON.parse(fileToCheck);
+    return file.valid;
+}
+function isHashValid(file, encryptedFileHash) {
+    const hashSum = crypto.createHash('sha256');
+    hashSum.update(file);
+    const hash = hashSum.digest('hex');
+    const decrypted = jsEncrypt.decrypt(encryptedFileHash);
+    return decrypted === hash;
+}
 
-console.log(key.exportKey());
+function handleError(fileName, errors) {
+    sendNotification(fileName, errors);
+}
 
 exports.serviceController = {
 
@@ -50,45 +62,49 @@ exports.serviceController = {
                 let data = [];
                 console.log(req.body);
                 //loop all files
-                for(let i = 0; i < req.files.reports.length; i++) {
+                for (let i = 0; i < req.files.reports.length; i++) {
                     //get file
                     let file = req.files.reports[i];
                     //get file name
                     let fileName = file.name;
-                    file.mv(`${process.cwd()}/filesUploads/${fileName}`, function(err) {
+                    file.mv(`${process.cwd()}/filesUploads/${fileName}`, function (err) {
                         if (err) {
                             console.log(err);
                             res.status(500).send(err);
                         } else {
-                            let rawdata = fs.readFileSync(`${process.cwd()}/filesUploads/${fileName}`, 'utf8');
-                            const hashSum = crypto.createHash('sha256');
-                            hashSum.update(rawdata);
-                            const hash = hashSum.digest('hex');
-                            const decrypted = jsEncrypt.decrypt(req.body["file"+i]);
-                            if(decrypted === hash) {
-                                data.push({
-                                    fileName: fileName,
-                                    filePath: `${process.cwd()}/filesUploads/${fileName}`,
-                                    fileHash: hash
-                                });
-                            } else {
+                            const fileToCheck = fs.readFileSync(`${process.cwd()}/filesUploads/${fileName}`, 'utf8');
+                            const isHashValid = isHashValid(fileToCheck, req.body["file" + i]);
+                            const isStructureValid = validator(fileName, fileToCheck);
+                            const isContentValid = contentValidator(fileToCheck);
 
-                                res.status(500).send({
-                                    status: false,
-                                    message: 'File is not valid!'
-                                });
+                            const isFileValid = isHashValid.valid && isStructureValid.valid && isContentValid.valid
+
+                            if (!isFileValid) {
+                                let errors = "";
+                                if (!isHashValid.valid) {
+                                    errors += isHashValid.errors + "\n";
+                                }
+                                if (!isStructureValid.valid) {
+                                    errors += isStructureValid.errors + "\n";
+                                }
+                                if (!isContentValid.valid) {
+                                    errors += isContentValid.errors + "\n";
+                                }
+                                handleError(fileName, errors);
                             }
-                            console.log(decrypted == hex);
 
+                            uploadFile(fileName, isFileValid)
                         }
                     });
                 }
+
                 res.send({
                     status: true,
                     message: 'Files are uploaded',
                     data: data
                 });
             }
+
         } catch (err) {
             res.status(500).send(err);
         }
